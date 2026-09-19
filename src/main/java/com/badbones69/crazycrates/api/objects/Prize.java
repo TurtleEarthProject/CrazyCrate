@@ -6,6 +6,7 @@ import com.badbones69.crazycrates.api.builders.ItemBuilder;
 import com.badbones69.crazycrates.api.enums.Messages;
 import com.badbones69.crazycrates.api.enums.misc.Keys;
 import com.badbones69.crazycrates.api.mmo.CRMMOApi;
+import com.badbones69.crazycrates.api.nexo.CRNexoApi;
 import com.badbones69.crazycrates.common.config.ConfigManager;
 import com.badbones69.crazycrates.common.config.impl.messages.CrateKeys;
 import com.badbones69.crazycrates.utils.ItemUtils;
@@ -41,6 +42,8 @@ public class Prize {
     private final String prizeName;
     private List<String> permissions = new ArrayList<>();
     private ItemBuilder displayItem = new ItemBuilder();
+    private String nexoDisplayId;
+    private boolean nexoDisplayResolved;
     private boolean firework = false;
     private String crateName = "";
     private double weight = -1.0;
@@ -116,6 +119,14 @@ public class Prize {
 
     @NotNull
     public final ItemStack getDisplayItem(@Nullable Player player, Crate crate) {
+        // Nexo loads item definitions asynchronously. Retry the configured
+        // Nexo display item when the first crate load happened too early.
+        if (this.nexoDisplayId != null && !this.nexoDisplayResolved) {
+            CRNexoApi nexoApi = this.plugin.getNexoApi();
+            if (nexoApi != null && nexoApi.getItemStack(this.nexoDisplayId) != null) {
+                this.displayItem = this.display();
+            }
+        }
         int pulls = PrizeManager.getCurrentPulls(this, crate);
         int maxPulls = this.getMaxPulls();
         String amount = String.valueOf(pulls);
@@ -278,8 +289,23 @@ public class Prize {
         try {
             Object type;
 
+            String configuredNexoId = this.section.getString("Nexo.Id",
+                    this.section.getString("Nexo.Item", ""));
+            if (configuredNexoId != null && !configuredNexoId.isBlank()) {
+                this.nexoDisplayId = configuredNexoId.trim();
+                CRNexoApi nexoApi = this.plugin.getNexoApi();
+                if (nexoApi != null) {
+                    ItemStack nexoItem = nexoApi.getItemStack(this.nexoDisplayId);
+                    if (nexoItem != null) {
+                        builder = new ItemBuilder(nexoItem);
+                        this.nexoDisplayResolved = true;
+                    }
+                }
+            }
+
             // If configured, use an MMOItems template as the base display item.
-            if (this.section.contains("MMOItems.Type") && this.section.contains("MMOItems.Id")) {
+            if (!this.nexoDisplayResolved && this.section.contains("MMOItems.Type")
+                    && this.section.contains("MMOItems.Id")) {
                 CRMMOApi api = this.plugin.getMmoApi();
                 if (api != null) {
                     String mmoType = this.section.getString("MMOItems.Type", "");

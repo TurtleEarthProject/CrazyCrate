@@ -1,6 +1,7 @@
 package com.badbones69.crazycrates;
 
 import com.badbones69.crazycrates.api.mmo.CRMMOApi;
+import com.badbones69.crazycrates.api.nexo.CRNexoApi;
 import com.badbones69.crazycrates.api.PrizeManager;
 import com.badbones69.crazycrates.commands.CommandManager;
 import com.badbones69.crazycrates.common.Server;
@@ -44,6 +45,7 @@ public class CrazyCrates extends JavaPlugin {
     private Server instance;
     @Nullable
     private CRMMOApi mmoApi;
+    private CRNexoApi nexoApi;
 
     @Internal
     public static CrazyCrates getPlugin() {
@@ -65,6 +67,10 @@ public class CrazyCrates extends JavaPlugin {
 
         if (getServer().getPluginManager().isPluginEnabled("MMOItems")) {
             mmoApi = new CRMMOApi();
+        }
+
+        if (getServer().getPluginManager().isPluginEnabled("Nexo")) {
+            nexoApi = new CRNexoApi();
         }
 
         this.inventoryManager = new InventoryManager();
@@ -154,6 +160,11 @@ public class CrazyCrates extends JavaPlugin {
     @Internal
     public final @Nullable CRMMOApi getMmoApi() {
         return this.mmoApi;
+    }
+
+    @Internal
+    public final @Nullable CRNexoApi getNexoApi() {
+        return this.nexoApi;
     }
 
     @Internal

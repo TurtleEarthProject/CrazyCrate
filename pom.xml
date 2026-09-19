@@ -70,7 +70,10 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <!-- Compile against the current 1.21 API.  The plugin only uses
+                 Bukkit/Paper API types, so this remains compatible with all
+                 1.21.x servers while allowing 1.21.11-specific API changes. -->
+            <version>1.21.11-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -124,19 +127,19 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
-            <version>4.17.0</version>
+            <version>4.26.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-logger-slf4j</artifactId>
-            <version>4.17.0</version>
+            <version>4.26.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-plain</artifactId>
-            <version>4.17.0</version>
+            <version>4.26.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

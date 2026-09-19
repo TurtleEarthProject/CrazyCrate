@@ -2,7 +2,7 @@ name: 'CrazyCrates'
 main: 'com.badbones69.crazycrates.CrazyCrates'
 
 version: '4.0.6'
-api-version: '1.21.4'
+api-version: '1.21'
 description: 'Create unlimited crates with multiple crate types to choose from!'
 website: 'https://modrinth.com/plugin/crazycrates'
 
@@ -35,6 +35,10 @@ dependencies:
       required: false
       join-classpath: true
     MMOItems:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    Nexo:
       load: BEFORE
       required: false
       join-classpath: true
